@@ -75,10 +75,6 @@ export const TransactionProvider = ({ children }) => {
         checkIfWalletIsConnected();
     }, []);
 
-    // useEffect(() => {
-    //     setGotTransactons(true);
-    // }, [transactions.length > 0]);
-
     return (
         <TransactionContext.Provider value={{ connectWallet, currentAccount, transactions, invalidNetwork }}>
             {children}
