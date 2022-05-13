@@ -29,9 +29,7 @@ const TransacationCard = ({ addressTo, addressFrom, timestamp, message, amount }
 
       </div>
           <div className='bg-black p-3 px-5 w-max rounded-3xl -mt-5 shadow-2xl'>
-          <a href={`https://ropsten.etherscan.io/address/${addressTo}`} target='blank' rel="noopener noreferrer">
             <p className='text-[#37c7da] font-bold'>{timestamp}</p>
-            </a>
           </div>
     </div>
   </div>
@@ -39,25 +37,37 @@ const TransacationCard = ({ addressTo, addressFrom, timestamp, message, amount }
 }
 
 const Transactions = () => {
-  const { currentAccount, transactions } = useContext(TransactionContext);
+  const { currentAccount, transactions, invalidNetwork } = useContext(TransactionContext);
 
-
-  return (
-    <div className='flex w-full justify-center items-center 2xl:px-20 gradient-bg-transactions'>
-      <div className='flex flex-col md:p-12 py-12 px-4'>
-      {currentAccount ? (
-        <h3 className='text-white text-3xl text-center my-2'>Latest Transactions</h3>
-      ) : (
-        <h3 className='text-white text-3xl text-center my-2'>Connect your wallet to see your transactions</h3>
-      )}
-      <div className='flex flex-wrap justify-center items-center mt-10'>
-        {transactions.reverse().map((transaction, i)=>(
-          <TransacationCard key={i} {...transaction}/>
-        ))}
+    return (
+      <div className='flex w-full justify-center items-center 2xl:px-20 gradient-bg-transactions'>
+        <div className='flex flex-col h-screen md:p-12 py-10 px-4'>
+        {currentAccount && !invalidNetwork && (
+          <h3 className='text-white text-3xl text-center my-2'>Latest Transactions</h3>
+        )}
+        {!currentAccount && (
+          <div className='flex flex-col md:p-12 py-12 px-4'>
+          <h3 className='text-white text-3xl text-center my-2'>Connect your account to see your latest transactions</h3>
+          </div>
+        )}
+        {currentAccount && invalidNetwork && (
+          <>
+          <div className='flex w-full justify-center items-center 2xl:px-20 gradient-bg-transactions'>
+            <div className='flex flex-col md:p-12 py-12 px-4'>
+            <h3 className='text-white text-3xl text-center my-2'>No Transactions</h3>
+            <p className='text-white text-xl text-center my-2 py-5'>You don't have any transactions. Make sure you're connected to the Ropsten test network, then refresh the page.</p> 
+            <br /><p className='text-white text-xl text-center my-2'>Error</p>
+            </div>
+          </div>
+          </>
+        )}
+        {transactions && (<div className='flex flex-wrap justify-center items-center mt-10'>
+           {transactions.reverse().map((transaction, i) => (
+            <TransacationCard key={i} {...transaction} />))}
+            </div>)}
+        </div>
       </div>
-      </div>
-    </div>
-  );
-};
+    )
+  };
 
 export default Transactions;
