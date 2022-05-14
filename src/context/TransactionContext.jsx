@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 
-import { contractABI, contractAddress } from '../utils/constants';
+import { contractABI, contractAddress, networks } from '../utils/constants';
 
 export const TransactionContext = React.createContext();
 
 const { ethereum } = window;
+
 
 const getEthereumContract = () => {
     const provider = new ethers.providers.Web3Provider(ethereum);
@@ -14,14 +15,28 @@ const getEthereumContract = () => {
     return transactionContract;
 }
 
+const getEthereumChainData = () => {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const network = provider.getNetwork();
+    return network;
+}
+
 export const TransactionProvider = ({ children }) => {
     const [currentAccount, setCurrentAccount] = useState('');
     const [transactions, setTransactions] = useState([]);
-    const [invalidNetwork, setInvalidNetwork] = useState(false);
+    const [chainId, setChainId] = useState(0);
 
     const getAllTransactions = async () => {
         try {
             if(!ethereum) return alert('Please install MetaMask');
+
+            ethereum.on('chainChanged', () => {
+                window.location.reload();
+              });
+
+            const chainId = await getEthereumChainData();
+            setChainId(chainId.chainId);
+
             const transactionContract = getEthereumContract();
             const availableTransactions = await transactionContract.getAllTransactions();
             
@@ -36,7 +51,6 @@ export const TransactionProvider = ({ children }) => {
 
         } catch (error) {
             console.log(error);
-            setInvalidNetwork(true);
         }
     }
 
@@ -76,7 +90,7 @@ export const TransactionProvider = ({ children }) => {
     }, []);
 
     return (
-        <TransactionContext.Provider value={{ connectWallet, currentAccount, transactions, invalidNetwork }}>
+        <TransactionContext.Provider value={{ connectWallet, currentAccount, transactions, chainId }}>
             {children}
         </TransactionContext.Provider>
     );

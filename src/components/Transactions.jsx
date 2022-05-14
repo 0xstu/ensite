@@ -37,12 +37,12 @@ const TransacationCard = ({ addressTo, addressFrom, timestamp, message, amount }
 }
 
 const Transactions = () => {
-  const { currentAccount, transactions, invalidNetwork } = useContext(TransactionContext);
+  const { currentAccount, transactions, chainId } = useContext(TransactionContext);
 
     return (
       <div className='flex w-full justify-center items-center 2xl:px-20 gradient-bg-transactions'>
         <div className='flex flex-col h-screen md:p-12 py-10 px-4'>
-        {currentAccount && !invalidNetwork && (
+        {currentAccount && chainId === 3 && (
           <h3 className='text-white text-3xl text-center my-2'>Latest Transactions</h3>
         )}
         {!currentAccount && (
@@ -50,12 +50,12 @@ const Transactions = () => {
           <h3 className='text-white text-3xl text-center my-2'>Connect your account to see your latest transactions</h3>
           </div>
         )}
-        {currentAccount && invalidNetwork && (
+        {currentAccount && chainId !== 3 && (
           <>
           <div className='flex w-full justify-center items-center 2xl:px-20 gradient-bg-transactions'>
             <div className='flex flex-col md:p-12 py-12 px-4'>
             <h3 className='text-white text-3xl text-center my-2'>No Transactions</h3>
-            <p className='text-white text-xl text-center my-2 py-5'>You don't have any transactions. Make sure you're connected to the Ropsten test network, then refresh the page.</p> 
+            <p className='text-white text-xl text-center my-2 py-5'>You don't have any transactions. Make sure you have the Ropsten network selected, then refresh the page.</p> 
             <br /><p className='text-white text-xl text-center my-2'>Error</p>
             </div>
           </div>
